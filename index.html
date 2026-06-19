@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rooftop — Write above the noise</title>
+  <meta name="description" content="A quiet home for newsletters that readers finish. Built-in audience, distraction-free editor, and zero platform fees on your first 1,000 subscribers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --ink: #0e1726;
+  --cream: #fffaf0;
+  --yellow: #fde68a;
+  --sky: #cfe2f5;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--sky);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--ink); color: var(--yellow); }
+
+.italic { font-style: italic; font-weight: 700; letter-spacing: -0.05em; }
+
+h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
+
+/* ---------- Shared chip ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 7px 14px 7px 8px;
+  border-radius: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: 0.04em;
+  color: #fff;
+}
+.chip--hero {
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  margin-bottom: 32px;
+}
+.chip--features {
+  background: rgba(255, 255, 255, 0.22);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  margin-bottom: 28px;
+}
+.chip { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.chip__badge {
+  display: inline-grid; place-items: center;
+  width: 18px; height: 18px;
+  background: var(--yellow); color: var(--ink);
+  font-weight: 700; font-size: 11px;
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-image: url('assets/hero-skyline.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero__vignette {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(56,128,201,0.18) 0%,
+    rgba(56,128,201,0) 35%,
+    rgba(56,128,201,0) 70%,
+    rgba(20,40,80,0.08) 100%);
+}
+
+/* NAV */
+.nav {
+  position: relative; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 40px;
+  max-width: 1400px; margin: 0 auto;
+}
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.logo__mark {
+  display: inline-grid; place-items: center;
+  width: 30px; height: 30px;
+  background: var(--ink); color: var(--yellow);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 13px;
+  box-shadow: 3px 3px 0 var(--ink);
+  image-rendering: pixelated;
+}
+.logo__word { font-weight: 700; font-size: 22px; letter-spacing: -0.025em; color: var(--ink); }
+.nav__links { display: flex; align-items: center; gap: 36px; font-size: 15px; font-weight: 500; }
+.nav__links a { color: rgba(14,23,38,0.72); text-decoration: none; transition: color .15s ease; }
+.nav__links a:hover { color: var(--ink); }
+
+.pill--login {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  color: var(--ink); text-decoration: none;
+  font-weight: 600; font-size: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.pill--login:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.pill--login:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+
+/* HERO COPY */
+.hero__copy {
+  position: relative; z-index: 4;
+  max-width: 1100px; margin: 0 auto;
+  padding: 80px 40px 0;
+  text-align: center; color: #fff;
+}
+.hero__title {
+  font-weight: 700;
+  font-size: clamp(56px, 9vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  margin: 0 0 28px;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(14,40,90,0.18);
+  text-wrap: balance;
+}
+.hero__lede {
+  max-width: 620px; margin: 0 auto 40px;
+  font-size: 19px; line-height: 1.55; font-weight: 400;
+  color: rgba(255,255,255,0.95);
+  text-wrap: pretty;
+  text-shadow: 0 1px 12px rgba(14,40,90,0.15);
+}
+.hero__lede strong { font-weight: 700; }
+
+/* let the mouse reach the envelopes floating behind the copy */
+.hero__copy { pointer-events: none; }
+.hero__copy a, .hero__copy .btn { pointer-events: auto; }
+
+.hero__cta { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.btn {
+  display: inline-flex; align-items: center;
+  text-decoration: none; font-weight: 700; font-size: 15px;
+  border-radius: 0; border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.btn:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn--primary {
+  gap: 10px; padding: 14px 24px 14px 14px;
+  background: var(--ink); color: var(--cream);
+}
+.btn__icon {
+  display: inline-grid; place-items: center;
+  width: 24px; height: 24px;
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--cream);
+  border-radius: 0;
+}
+.btn--secondary {
+  gap: 8px; padding: 14px 24px;
+  background: var(--cream); color: var(--ink);
+}
+.hero__meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+}
+
+/* floating envelopes (open on hover / focus) */
+.envelope {
+  position: absolute; z-index: 2;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  image-rendering: pixelated;
+  perspective: 160px;
+  cursor: pointer; outline: none;
+  transition: transform .3s cubic-bezier(.2,.8,.3,1);
+}
+.envelope__flap-back, .envelope__flap-front { position: absolute; top: 0; width: 0; height: 0; }
+.envelope__flap-front {
+  transform-origin: 50% 0; backface-visibility: hidden; z-index: 2;
+  transition: transform .4s cubic-bezier(.3,.9,.3,1.15);
+}
+/* the letter that rises out */
+.envelope__letter {
+  position: absolute; left: 50%; top: 50%;
+  width: 64%; height: 78%;
+  box-sizing: border-box; padding: 3px 3px 0;
+  background: #fffefb; border: 1.5px solid var(--ink);
+  display: flex; flex-direction: column; gap: 2px;
+  transform: translate(-50%, 6%) scale(.8);
+  opacity: 0; z-index: 4;
+  transition: transform .42s cubic-bezier(.3,.9,.3,1.15) .03s, opacity .25s ease .03s;
+}
+.envelope__letter i { display: block; height: 2px; background: rgba(14,23,38,.5); }
+.envelope__letter i:nth-child(1) { width: 82%; }
+.envelope__letter i:nth-child(2) { width: 54%; }
+
+.envelope--1 {
+  --rot: -8deg; left: 8%; top: 36%; width: 46px; height: 34px;
+  box-shadow: 4px 4px 0 rgba(14,23,38,0.25);
+  transform: rotate(var(--rot));
+}
+.envelope--1 .envelope__flap-back { left: 0; border-left: 21px solid transparent; border-right: 21px solid transparent; border-top: 14px solid var(--ink); }
+.envelope--1 .envelope__flap-front { left: 2px; border-left: 19px solid transparent; border-right: 19px solid transparent; border-top: 12px solid var(--cream); }
+.envelope--2 {
+  --rot: 12deg; right: 12%; top: 18%; width: 40px; height: 30px;
+  box-shadow: 3px 3px 0 rgba(14,23,38,0.22);
+  transform: rotate(var(--rot));
+}
+.envelope--2 .envelope__flap-back { left: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 12px solid var(--ink); }
+.envelope--2 .envelope__flap-front { left: 2px; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 10px solid var(--cream); }
+.envelope--3 {
+  --rot: -6deg; right: 18%; top: 54%; width: 30px; height: 22px;
+  box-shadow: 3px 3px 0 rgba(14,23,38,0.2);
+  transform: rotate(var(--rot));
+}
+.envelope--3 .envelope__flap-back { left: 0; border-left: 13px solid transparent; border-right: 13px solid transparent; border-top: 8px solid var(--ink); }
+
+/* open state */
+.envelope:hover, .envelope:focus-visible {
+  transform: rotate(var(--rot)) translateY(-14px) scale(1.18);
+  z-index: 6;
+  box-shadow: 6px 8px 0 rgba(14,23,38,0.22);
+}
+.envelope:hover .envelope__flap-front,
+.envelope:focus-visible .envelope__flap-front { transform: rotateX(-178deg); }
+.envelope:hover .envelope__letter,
+.envelope:focus-visible .envelope__letter { transform: translate(-50%, -104%) scale(1.04); opacity: 1; }
+
+/* ---------- FEATURES ---------- */
+.features {
+  position: relative;
+  background: linear-gradient(180deg, #6aa3dc 0%, #88b8e6 38%, #b6d3ee 100%);
+  padding: 130px 40px 150px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cloud { position: absolute; z-index: 1; image-rendering: pixelated; }
+.cloud__row { height: 10px; background: var(--cream); }
+.cloud--1 { left: 6%; top: 80px; }
+.cloud--2 { right: 8%; top: 140px; }
+.cloud--3 { left: 18%; bottom: 120px; }
+
+.features__head {
+  position: relative; z-index: 2;
+  max-width: 1240px; margin: 0 auto 64px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 24px;
+}
+.features__title {
+  font-weight: 700;
+  font-size: clamp(44px, 5.4vw, 78px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  margin: 0; color: #fff;
+  max-width: 760px; text-wrap: balance;
+  text-shadow: 0 2px 18px rgba(14,40,90,0.18);
+}
+.features__intro {
+  max-width: 445px; margin: 0;
+  font-size: 17px; line-height: 1.55;
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 1px 12px rgba(14,40,90,0.15);
+}
+
+.cards {
+  position: relative; z-index: 2;
+  max-width: 1240px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.card {
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  padding: 28px 28px 32px;
+  box-shadow: 6px 6px 0 var(--ink);
+  display: flex; flex-direction: column; gap: 20px;
+  min-height: 380px;
+}
+.card--dark {
+  background: var(--ink); color: var(--cream);
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 rgba(14,23,38,0.55);
+  position: relative; overflow: hidden;
+}
+.card__meta {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #7c5e3a;
+}
+.card--dark .card__meta { color: var(--yellow); }
+.card__arrow {
+  display: inline-grid; place-items: center;
+  width: 24px; height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 0; font-size: 11px;
+}
+.card__arrow--dark { background: var(--ink); color: var(--yellow); }
+.card__arrow--light { background: var(--yellow); color: var(--ink); }
+
+.card__title { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.card__body { margin: 0; font-size: 15px; line-height: 1.55; color: rgba(14,23,38,0.68); }
+.card--dark .card__body { color: rgba(255,250,240,0.72); }
+
+/* illustrations */
+.illus {
+  height: 120px; border-radius: 0;
+  border: 2px solid var(--ink);
+  position: relative; overflow: hidden;
+  image-rendering: pixelated;
+}
+.illus--notepad { background: linear-gradient(180deg, #e8f1fb 0%, #d6e6f7 100%); }
+.notepad {
+  position: absolute; left: 18px; top: 14px; right: 18px; bottom: 14px;
+  background: var(--cream); border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.notepad__title { height: 6px; background: var(--ink); margin: 8px 10px; }
+.notepad__line { height: 3px; background: rgba(14,23,38,0.6); margin: 6px 14px; }
+
+.illus--skyline { background: linear-gradient(180deg, #3880c9 0%, #6aa3dc 100%); }
+.bldg { position: absolute; }
+.sk-cloud { position: absolute; background: var(--cream); }
+.sk-cloud--a { left: 18px; top: 18px; width: 34px; height: 8px; }
+.sk-cloud--b { left: 22px; top: 14px; width: 22px; height: 8px; }
+.window { position: absolute; width: 6px; height: 6px; background: var(--yellow); }
+
+.illus--coins { background: linear-gradient(180deg, #fff3d4 0%, #fde68a 100%); }
+.coin {
+  position: absolute;
+  border: 2px solid var(--ink); border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink);
+}
+.coin--pct { left: 36px; bottom: 14px; width: 48px; height: 48px; background: #f1b94a; font-size: 18px; }
+.coin--dollar { left: 78px; bottom: 34px; width: 48px; height: 48px; background: var(--cream); font-size: 13px; transform: rotate(8deg); box-shadow: 3px 3px 0 var(--ink); }
+.coin--ink { right: 30px; bottom: 18px; width: 38px; height: 38px; background: var(--ink); box-shadow: -3px 3px 0 rgba(14,23,38,0.3); }
+
+/* marquee */
+.marquee {
+  position: relative; z-index: 2;
+  max-width: 1240px; margin: 90px auto 0;
+  border-top: 1px dashed rgba(255,255,255,0.45);
+  padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 28px; flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+.wm { color: #fff; }
+.wm--italic { font-style: italic; font-weight: 600; text-transform: none; font-size: 22px; letter-spacing: -0.025em; }
+.wm--bold { font-weight: 700; text-transform: none; font-size: 20px; letter-spacing: -0.025em; }
+.wm--mono { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; }
+
+.hero__bgimg {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center bottom;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+/* ---------- intro reveal ---------- */
+.hero__video {
+  position: absolute; inset: 0; z-index: 20;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center bottom;
+  image-rendering: pixelated;
+  background: #4aa3f0;
+  transition: opacity 0.9s ease;
+  cursor: pointer;
+}
+.hero__skip {
+  position: absolute; z-index: 21;
+  right: 22px; bottom: 22px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px;
+  background: rgba(14,23,38,0.55);
+  color: #fff; border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: opacity 0.5s ease, background 0.15s ease;
+}
+.hero__skip:hover { background: rgba(14,23,38,0.75); }
+
+/* content hidden until the intro finishes */
+.intro-active .nav,
+.intro-active .hero__copy,
+.intro-active .envelope { opacity: 0; }
+
+/* once revealed: video + skip fade out, content drifts in */
+.is-revealed .hero__video,
+.is-revealed .hero__skip { opacity: 0; pointer-events: none; }
+
+.is-revealed .nav { animation: rise 0.7s ease 0.05s both; }
+.is-revealed .hero__copy { animation: rise 0.9s ease 0.18s both; }
+.is-revealed .envelope { animation: fade 1s ease 0.6s both; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__video, .hero__skip { display: none; }
+  .intro-active .nav,
+  .intro-active .hero__copy,
+  .intro-active .envelope { opacity: 1; }
+  .is-revealed .nav,
+  .is-revealed .hero__copy,
+  .is-revealed .envelope { animation: none; }
+  .envelope, .envelope__flap-front, .envelope__letter { transition: none; }
+}
+
+
+/* ---------- WRITERS ---------- */
+.writers {
+  position: relative;
+  background: linear-gradient(180deg, #1e3352 0%, #152742 100%);
+  color: var(--cream);
+  padding: 130px 40px 140px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.chip--dark {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid var(--cream);
+  box-shadow: 3px 3px 0 var(--yellow);
+  margin-bottom: 0;
+}
+.writers__head {
+  position: relative; z-index: 2;
+  max-width: 1240px; margin: 0 auto 56px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 32px; flex-wrap: wrap;
+}
+.writers__title {
+  font-weight: 700;
+  font-size: clamp(44px, 5.4vw, 78px);
+  line-height: 0.95; letter-spacing: -0.045em;
+  margin: 20px 0 0; color: #fff;
+  max-width: 720px; text-wrap: balance;
+}
+.writers__stat { font-family: 'JetBrains Mono', monospace; text-align: right; }
+.writers__stat b { display: block; font-size: 42px; color: var(--yellow); letter-spacing: -0.03em; }
+.writers__stat span { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,250,240,0.55); }
+
+.star { position: absolute; z-index: 1; background: rgba(253,230,138,0.35); image-rendering: pixelated; pointer-events: none; }
+
+/* pixel planets */
+.planet { position: absolute; z-index: 1; pointer-events: none; image-rendering: pixelated; }
+.planet__row { background: currentColor; }
+.planet__ring { position: absolute; pointer-events: none; image-rendering: pixelated; }
+.planet__ring span { display: block; background: currentColor; }
+
+.quotes {
+  position: relative; z-index: 2;
+  max-width: 1240px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.35fr 1fr; gap: 28px;
+  align-items: stretch;
+}
+.quote--feature {
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.45);
+  padding: 42px 42px 34px;
+  display: flex; flex-direction: column; gap: 26px;
+}
+.quote__mark {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 72px; font-weight: 700; line-height: 0.4;
+  color: var(--ink);
+}
+.quote--feature .quote__text {
+  margin: 0; flex: 1;
+  font-size: clamp(24px, 2.4vw, 32px); line-height: 1.28;
+  font-weight: 600; letter-spacing: -0.025em;
+}
+.quote__by { display: flex; align-items: center; gap: 13px; }
+.quote__avatar {
+  flex: none; width: 46px; height: 46px;
+  background: var(--ink); color: var(--yellow);
+  display: grid; place-items: center; border: 2px solid var(--ink);
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.22);
+  image-rendering: pixelated;
+}
+.quote__name { font-weight: 700; font-size: 16px; line-height: 1.2; }
+.quote__pub { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(14,23,38,0.55); }
+
+.quote-list { display: flex; flex-direction: column; }
+.qrow {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 26px 2px;
+  border-bottom: 1px dashed rgba(255,250,240,0.25);
+}
+.qrow:first-child { padding-top: 4px; }
+.qrow:last-child { border-bottom: none; padding-bottom: 0; }
+.qrow__avatar {
+  flex: none; width: 42px; height: 42px;
+  background: var(--cream); color: var(--ink); border: 2px solid var(--cream);
+  display: grid; place-items: center;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;
+  image-rendering: pixelated;
+}
+.qrow__text { margin: 0 0 10px; font-size: 16px; line-height: 1.45; color: rgba(255,250,240,0.92); }
+.qrow__by { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; color: var(--yellow); }
+.qrow__by span { color: rgba(255,250,240,0.5); font-weight: 400; }
+
+/* ---------- PRICING ---------- */
+.pricing {
+  position: relative;
+  background: linear-gradient(180deg, #0e1a2e 0%, #091320 100%);
+  color: var(--cream);
+  padding: 130px 40px 140px;
+  overflow: hidden;
+}
+.pricing__head {
+  max-width: 1240px; margin: 0 auto 60px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 22px;
+}
+.chip--light {
+  background: rgba(255,255,255,0.08); border: 2px solid var(--cream);
+  box-shadow: 3px 3px 0 var(--yellow); color: #fff;
+  margin-bottom: 0;
+}
+.chip--light .chip__badge { background: var(--yellow); color: var(--ink); border-color: var(--cream); }
+.pricing__title {
+  font-weight: 700; font-size: clamp(44px, 5.4vw, 78px);
+  line-height: 0.95; letter-spacing: -0.045em; margin: 0;
+  max-width: 760px; text-wrap: balance; color: #fff;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.2);
+}
+.pricing__intro { max-width: 520px; margin: 0; font-size: 17px; line-height: 1.55; color: rgba(255,250,240,0.62); text-wrap: pretty; }
+
+.plans {
+  max-width: 1040px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;
+  align-items: start;
+}
+.plan {
+  background: var(--cream); color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.4);
+  padding: 36px 32px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+.plan--feat { background: var(--ink); color: var(--cream); box-shadow: 8px 8px 0 var(--yellow); position: relative; }
+.plan__tag {
+  position: absolute; top: -15px; right: 26px;
+  background: var(--yellow); color: var(--ink); border: 2px solid var(--ink);
+  padding: 5px 12px; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;
+}
+.plan__name { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(14,23,38,0.55); margin: 0; }
+.plan--feat .plan__name { color: var(--yellow); }
+.plan__price { display: flex; align-items: baseline; gap: 8px; }
+.plan__price b { font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
+.plan__price span { font-size: 15px; color: rgba(14,23,38,0.55); }
+.plan--feat .plan__price span { color: rgba(255,250,240,0.6); }
+.plan__desc { margin: 0; font-size: 15px; line-height: 1.5; color: rgba(14,23,38,0.65); }
+.plan--feat .plan__desc { color: rgba(255,250,240,0.7); }
+.plan__rule { height: 2px; background: var(--ink); opacity: 0.12; margin: 2px 0; }
+.plan--feat .plan__rule { background: var(--cream); opacity: 0.18; }
+.plan__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 13px; }
+.plan__list li { display: flex; align-items: flex-start; gap: 11px; font-size: 15px; line-height: 1.4; }
+.plan__check {
+  flex: none; width: 18px; height: 18px; margin-top: 1px;
+  background: var(--yellow); color: var(--ink); border: 1.5px solid var(--ink);
+  display: grid; place-items: center; font-size: 10px; font-weight: 700;
+}
+.plan--feat .plan__check { border-color: var(--cream); }
+.plan .btn { width: 100%; justify-content: center; margin-top: 6px; }
+
+/* ---------- FOOTER ---------- */
+.footer {
+  position: relative;
+  background: #040810; color: var(--cream);
+  padding: 72px 40px 40px;
+  overflow: hidden;
+}
+.footer__divider {
+  max-width: 1240px; margin: 0 auto 52px;
+  border: none; border-top: 1px dashed rgba(255,250,240,0.22);
+}
+.footer__inner { max-width: 1240px; margin: 0 auto; }
+.footer__top {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px;
+  padding-bottom: 52px; border-bottom: 1px dashed rgba(255,250,240,0.22);
+}
+.footer__brand .logo { color: var(--cream); }
+.footer__brand .logo__word { color: var(--cream); }
+.footer__tag { margin: 18px 0 0; max-width: 290px; font-size: 15px; line-height: 1.5; color: rgba(255,250,240,0.62); }
+.footer__sub { display: flex; margin-top: 24px; max-width: 330px; box-shadow: 3px 3px 0 rgba(0,0,0,0.4); }
+.footer__sub input {
+  flex: 1; min-width: 0; padding: 12px 14px;
+  background: var(--cream); border: 2px solid var(--ink);
+  font-family: 'Instrument Sans', sans-serif; font-size: 14px; color: var(--ink); outline: none;
+}
+.footer__sub button {
+  padding: 12px 18px; background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink); border-left: none;
+  font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: background 0.15s ease;
+}
+.footer__sub button:hover { background: #ffd95e; }
+.footer__col h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow); margin: 4px 0 18px; }
+.footer__col a { display: block; color: rgba(255,250,240,0.76); text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.15s ease; }
+.footer__col a:hover { color: #fff; }
+.footer__bottom {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  padding-top: 28px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em;
+  color: rgba(255,250,240,0.5);
+}
+.footer__bottom a { color: rgba(255,250,240,0.5); text-decoration: none; }
+.footer__bottom a:hover { color: var(--yellow); }
+.footer__legal { display: flex; gap: 22px; flex-wrap: wrap; }
+
+/* ---------- scroll reveal ---------- */
+.r-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .75s cubic-bezier(.2,.7,.3,1), transform .75s cubic-bezier(.2,.7,.3,1);
+  will-change: opacity, transform;
+}
+.in-view .r-up { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .r-up { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+  .features__head { flex-direction: column; align-items: flex-start; }
+  .quotes { grid-template-columns: 1fr; }
+  .plans { grid-template-columns: 1fr; }
+  .footer__top { grid-template-columns: 1fr 1fr; gap: 32px 40px; }
+  .writers__head { align-items: flex-start; }
+}
+@media (max-width: 640px) {
+  .nav { padding: 18px 22px; }
+  .nav__links { display: none; }
+  .hero__copy { padding: 56px 22px 0; }
+  .hero__cta { flex-direction: column; width: 100%; }
+  .btn { justify-content: center; }
+  .features { padding: 90px 22px 110px; }
+  .marquee { justify-content: flex-start; }
+  .writers, .pricing { padding: 90px 22px 100px; }
+  .footer { padding: 56px 22px 32px; }
+  .footer__top { grid-template-columns: 1fr; gap: 36px; }
+  .footer__divider { margin-bottom: 40px; }
+}
+  </style>
+</head>
+<body>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-label="Hero">
+    <img class="hero__bgimg" alt="" aria-hidden="true" src="assets/hero-skyline.jpg">
+    <!-- intro reveal: plays once, then fades to the static skyline beneath -->
+    <video class="hero__video" id="introVideo" autoplay muted playsinline preload="auto"
+           poster="assets/hero-skyline.jpg" aria-hidden="true">
+      <source src="assets/hero-reveal.mp4" type="video/mp4">
+    </video>
+    <button class="hero__skip" id="introSkip" type="button">Skip intro</button>
+
+    <div class="hero__vignette" aria-hidden="true"></div>
+
+    <!-- NAV -->
+    <nav class="nav">
+      <a href="#" class="logo">
+        <span class="logo__mark">R</span>
+        <span class="logo__word">Rooftop</span>
+      </a>
+
+      <div class="nav__links">
+        <a href="#features">Features</a>
+        <a href="#writers">Writers</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+
+      <a href="#" class="pill pill--login">Log In</a>
+    </nav>
+
+    <!-- HERO COPY -->
+    <div class="hero__copy">
+      <div class="chip chip--hero">
+        NEW&nbsp;·&nbsp;Pixel Editor v2.0 is live
+      </div>
+
+      <h1 class="hero__title">
+        Write above<br>
+        <span class="italic">the&nbsp;noise.</span>
+      </h1>
+
+      <p class="hero__lede">
+        A quiet home for newsletters that <strong>readers finish</strong>.
+        Built-in <strong>audience</strong>, distraction-free editor,
+        and <strong>zero platform fees</strong> on your first 1,000 subscribers.
+      </p>
+
+      <div class="hero__cta">
+        <a href="#" class="btn btn--primary">
+          <span class="btn__icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Start writing free
+        </a>
+        <a href="#" class="btn btn--secondary">See example issues</a>
+      </div>
+
+      <div class="hero__meta">
+        12,847 writers&nbsp;·&nbsp;No credit card&nbsp;·&nbsp;Free forever tier
+      </div>
+    </div>
+
+    <!-- floating pixel mail icons (open on hover) -->
+    <div class="envelope envelope--1" tabindex="0" role="img" aria-label="Envelope">
+      <div class="envelope__letter"><i></i><i></i></div>
+      <div class="envelope__flap-back"></div>
+      <div class="envelope__flap-front"></div>
+    </div>
+    <div class="envelope envelope--2" tabindex="0" role="img" aria-label="Envelope">
+      <div class="envelope__letter"><i></i><i></i></div>
+      <div class="envelope__flap-back"></div>
+      <div class="envelope__flap-front"></div>
+    </div>
+    <div class="envelope envelope--3" tabindex="0" role="img" aria-label="Envelope">
+      <div class="envelope__letter"><i></i><i></i></div>
+      <div class="envelope__flap-back"></div>
+      <div class="envelope__flap-front"></div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="features" id="features" aria-label="What you get" data-reveal>
+    <!-- pixel clouds -->
+    <div class="cloud cloud--1" aria-hidden="true">
+      <div class="cloud__row" style="width:64px;"></div>
+      <div class="cloud__row" style="width:44px; margin-left:8px;"></div>
+    </div>
+    <div class="cloud cloud--2" aria-hidden="true">
+      <div class="cloud__row" style="width:48px; height:8px; opacity:.75;"></div>
+      <div class="cloud__row" style="width:80px; opacity:.85;"></div>
+      <div class="cloud__row" style="width:32px; height:8px; opacity:.75; margin-left:20px;"></div>
+    </div>
+    <div class="cloud cloud--3" aria-hidden="true">
+      <div class="cloud__row" style="width:36px; height:8px; opacity:.55;"></div>
+      <div class="cloud__row" style="width:56px; height:8px; opacity:.55;"></div>
+    </div>
+
+    <!-- header -->
+    <div class="features__head r-up">
+      <div>
+        <div class="chip chip--features">
+          What you get
+        </div>
+        <h2 class="features__title">
+          Three small things,<br>
+          <span class="italic">done&nbsp;properly.</span>
+        </h2>
+      </div>
+      <p class="features__intro">
+        Rooftop is opinionated about exactly the parts that ruin most newsletter tools — the editor, the inbox, and the bill. Everything else gets out of your way.
+      </p>
+    </div>
+
+    <!-- cards -->
+    <div class="cards">
+      <!-- Card 1 -->
+      <article class="card r-up">
+        <div class="card__meta">
+          <span>01 / Editor</span>
+          <span class="card__arrow card__arrow--dark">→</span>
+        </div>
+        <div class="illus illus--notepad">
+          <div class="notepad">
+            <div class="notepad__title"></div>
+            <div class="notepad__line"></div>
+            <div class="notepad__line"></div>
+            <div class="notepad__line" style="width:60%;"></div>
+            <div class="notepad__line" style="width:75%;"></div>
+          </div>
+        </div>
+        <h3 class="card__title">Just the page and you</h3>
+        <p class="card__body">No toolbars, no AI co-pilot whispering. Markdown shortcuts, one beautiful default style, and a word-count that hides until you ask for it.</p>
+      </article>
+
+      <!-- Card 2 (dark) -->
+      <article class="card card--dark r-up">
+        <div class="card__meta">
+          <span>02 / Audience</span>
+          <span class="card__arrow card__arrow--light">→</span>
+        </div>
+        <div class="illus illus--skyline">
+          <div class="sk-cloud sk-cloud--a"></div>
+          <div class="sk-cloud sk-cloud--b"></div>
+          <div class="bldg" style="bottom:0; left:10px;  width:28px; height:42px; background:#1f2a3d;"></div>
+          <div class="bldg" style="bottom:0; left:40px;  width:36px; height:58px; background:#2a3a55;"></div>
+          <div class="bldg" style="bottom:0; left:80px;  width:24px; height:36px; background:#b35a3a;"></div>
+          <div class="bldg" style="bottom:0; left:108px; width:30px; height:50px; background:#1f2a3d;"></div>
+          <div class="bldg" style="bottom:0; left:142px; width:40px; height:64px; background:#2a3a55;"></div>
+          <div class="bldg" style="bottom:0; left:186px; width:22px; height:30px; background:#b35a3a;"></div>
+          <div class="bldg" style="bottom:0; right:18px; width:28px; height:46px; background:#1f2a3d;"></div>
+          <div class="bldg" style="bottom:58px; left:48px; width:18px; height:14px; background:#1f2a3d;"></div>
+          <div class="bldg" style="bottom:54px; left:54px; width:6px; height:4px; background:#1f2a3d;"></div>
+          <div class="window" style="bottom:18px; left:48px;"></div>
+          <div class="window" style="bottom:30px; left:152px;"></div>
+        </div>
+        <h3 class="card__title">Found by readers, not algorithms</h3>
+        <p class="card__body">Every new writer gets featured on the Rooftop directory. Curated, weekly, by humans who actually read. No ads, no engagement bait.</p>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="card r-up">
+        <div class="card__meta">
+          <span>03 / Pricing</span>
+          <span class="card__arrow card__arrow--dark">→</span>
+        </div>
+        <div class="illus illus--coins">
+          <div class="coin coin--pct">0%</div>
+          <div class="coin coin--dollar">$0</div>
+          <div class="coin coin--ink"></div>
+        </div>
+        <h3 class="card__title">Free until you have readers</h3>
+        <p class="card__body">No platform fee until your 1,001st subscriber. After that, a flat 4% — the lowest in the category, and we don't touch your tips.</p>
+      </article>
+    </div>
+
+    <!-- wordmark marquee -->
+    <div class="marquee r-up">
+      <span class="marquee__label">Trusted by writers at:</span>
+      <span class="wm wm--italic">The&nbsp;Quiet&nbsp;Times</span>
+      <span class="wm wm--bold">FIELDNOTES</span>
+      <span class="wm wm--italic">brownstone&nbsp;weekly</span>
+      <span class="wm wm--mono">PIXEL/PRESS</span>
+    </div>
+  </section>
+
+  <!-- ============ WRITERS ============ -->
+  <section class="writers" id="writers" aria-label="Writers" data-reveal>
+    <div class="star" style="left:7%;  top:90px;  width:6px; height:6px;"></div>
+    <div class="star" style="left:11%; top:120px; width:4px; height:4px; opacity:.6;"></div>
+    <div class="star" style="right:9%; top:70px;  width:6px; height:6px;"></div>
+    <div class="star" style="right:14%;top:108px; width:4px; height:4px; opacity:.6;"></div>
+    <div class="star" style="left:46%; top:54px;  width:5px; height:5px; opacity:.5;"></div>
+
+    <div class="writers__head r-up">
+      <div>
+        <div class="chip chip--dark">
+          From the rooftops
+        </div>
+        <h2 class="writers__title">
+          Read by people who<br>
+          <span class="italic">actually&nbsp;read.</span>
+        </h2>
+      </div>
+      <div class="writers__stat">
+        <b>2.1M</b>
+        <span>issues opened last month</span>
+      </div>
+    </div>
+
+    <div class="quotes">
+      <article class="quote--feature r-up">
+        <div class="quote__mark">&ldquo;</div>
+        <p class="quote__text">I moved 4,000 readers over in a weekend and didn't lose a single one to a spam folder. The migration just worked &mdash; and then the editor made me want to write again.</p>
+        <div class="quote__by">
+          <span class="quote__avatar">KM</span>
+          <div>
+            <div class="quote__name">Kira Moreno</div>
+            <div class="quote__pub">The Quiet Times</div>
+          </div>
+        </div>
+      </article>
+
+      <div class="quote-list r-up">
+        <div class="qrow">
+          <span class="qrow__avatar">DV</span>
+          <div>
+            <p class="qrow__text">The editor is the first one that doesn't fight me. I open it and the words come out.</p>
+            <div class="qrow__by">Devon Vale <span>· Fieldnotes</span></div>
+          </div>
+        </div>
+        <div class="qrow">
+          <span class="qrow__avatar">AS</span>
+          <div>
+            <p class="qrow__text">Featured in the directory my second week. 600 new subscribers, zero ad spend.</p>
+            <div class="qrow__by">Asa Strand <span>· Brownstone Weekly</span></div>
+          </div>
+        </div>
+        <div class="qrow">
+          <span class="qrow__avatar">RO</span>
+          <div>
+            <p class="qrow__text">4% is the lowest cut I've seen, and they don't touch tips. My margins doubled overnight.</p>
+            <div class="qrow__by">Remy Oko <span>· Pixel/Press</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="pricing" id="pricing" aria-label="Pricing" data-reveal>
+    <div class="star" style="left:8%;  top:80px;  width:4px; height:4px; opacity:.4;"></div>
+    <div class="star" style="left:15%; top:50px;  width:3px; height:3px; opacity:.25;"></div>
+    <div class="star" style="right:10%;top:90px;  width:5px; height:5px; opacity:.5;"></div>
+    <div class="star" style="right:20%;top:44px;  width:3px; height:3px; opacity:.3;"></div>
+    <div class="star" style="left:42%; top:36px;  width:4px; height:4px; opacity:.35;"></div>
+    <div class="star" style="right:35%;bottom:80px;width:3px; height:3px; opacity:.2;"></div>
+    <!-- pixel planet with ring -->
+    <div class="planet" aria-hidden="true" style="right:6%; top:140px; color: #f1b94a; opacity:.55;">
+      <div class="planet__row" style="width:16px; height:6px; margin-left:6px;"></div>
+      <div class="planet__row" style="width:28px; height:6px;"></div>
+      <div class="planet__row" style="width:28px; height:6px; background: #d4943a;"></div>
+      <div class="planet__row" style="width:16px; height:6px; margin-left:6px; background: #d4943a;"></div>
+      <!-- ring -->
+      <div class="planet__ring" style="left:-10px; top:10px; color: rgba(253,230,138,0.35);">
+        <span style="width:48px; height:4px;"></span>
+      </div>
+    </div>
+
+    <div class="pricing__head r-up">
+      <div class="chip chip--light">
+        <span class="chip__badge">$</span>
+        Pricing
+      </div>
+      <h2 class="pricing__title">
+        Free until you have<br>
+        <span class="italic">readers&nbsp;to&nbsp;lose.</span>
+      </h2>
+      <p class="pricing__intro">One honest plan, one free plan. No seats, no add-ons, no surprise line item the month you finally go viral.</p>
+    </div>
+
+    <div class="plans">
+      <!-- Free -->
+      <article class="plan r-up">
+        <p class="plan__name">Free forever</p>
+        <div class="plan__price"><b>$0</b><span>/ month</span></div>
+        <p class="plan__desc">Everything you need to publish a real newsletter — up to your first 1,000 subscribers.</p>
+        <div class="plan__rule"></div>
+        <ul class="plan__list">
+          <li><span class="plan__check">✓</span> Distraction-free pixel editor</li>
+          <li><span class="plan__check">✓</span> Up to 1,000 subscribers</li>
+          <li><span class="plan__check">✓</span> Listing in the Rooftop directory</li>
+          <li><span class="plan__check">✓</span> Open &amp; click stats, kept simple</li>
+        </ul>
+        <a href="#" class="btn btn--primary">
+          <span class="btn__icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Start writing free
+        </a>
+      </article>
+
+      <!-- Rooftop (featured) -->
+      <article class="plan plan--feat r-up">
+        <span class="plan__tag">Most writers</span>
+        <p class="plan__name">Rooftop</p>
+        <div class="plan__price"><b>4%</b><span>of revenue</span></div>
+        <p class="plan__desc">Unlimited everything. Pay only when your readers pay you — the lowest cut in the category.</p>
+        <div class="plan__rule"></div>
+        <ul class="plan__list">
+          <li><span class="plan__check">✓</span> Unlimited subscribers</li>
+          <li><span class="plan__check">✓</span> Paid subscriptions &amp; tips (we keep 0% of tips)</li>
+          <li><span class="plan__check">✓</span> Custom domain &amp; full design control</li>
+          <li><span class="plan__check">✓</span> Priority spot in the weekly directory</li>
+        </ul>
+        <a href="#" class="btn btn--primary">Go Rooftop</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" aria-label="Footer" data-reveal>
+    <div class="star" style="left:5%;  top:30px;  width:3px; height:3px; opacity:.3;"></div>
+    <div class="star" style="left:25%; top:60px;  width:4px; height:4px; opacity:.2;"></div>
+    <div class="star" style="right:8%; top:45px;  width:3px; height:3px; opacity:.35;"></div>
+    <div class="star" style="right:30%;top:20px;  width:4px; height:4px; opacity:.25;"></div>
+    <div class="star" style="left:55%; top:50px;  width:3px; height:3px; opacity:.15;"></div>
+    <div class="star" style="left:70%; top:35px;  width:3px; height:3px; opacity:.2;"></div>
+    <div class="star" style="right:45%;top:55px;  width:4px; height:4px; opacity:.15;"></div>
+    <!-- pixel moon -->
+    <div class="planet" aria-hidden="true" style="left:4%; top:50px; color: #c8d8e8; opacity:.35;">
+      <div class="planet__row" style="width:10px; height:5px; margin-left:3px;"></div>
+      <div class="planet__row" style="width:16px; height:5px;"></div>
+      <div class="planet__row" style="width:16px; height:5px; background: #8a9ab0;"></div>
+      <div class="planet__row" style="width:10px; height:5px; margin-left:3px; background: #8a9ab0;"></div>
+    </div>
+    <!-- tiny pixel planet -->
+    <div class="planet" aria-hidden="true" style="right:12%; top:28px; color: #e8a855; opacity:.25;">
+      <div class="planet__row" style="width:6px; height:4px; margin-left:2px;"></div>
+      <div class="planet__row" style="width:10px; height:4px;"></div>
+      <div class="planet__row" style="width:6px; height:4px; margin-left:2px; background: #c47830;"></div>
+    </div>
+    <hr class="footer__divider" aria-hidden="true">
+
+    <div class="footer__inner">
+      <div class="footer__top r-up">
+        <div class="footer__brand">
+          <a href="#" class="logo">
+            <span class="logo__mark">R</span>
+            <span class="logo__word">Rooftop</span>
+          </a>
+          <p class="footer__tag">A quiet home for newsletters that readers finish.</p>
+          <form class="footer__sub" onsubmit="return false;">
+            <input type="email" placeholder="you@example.com" aria-label="Email address">
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
+
+        <div class="footer__col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#writers">Writers</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#">Example issues</a>
+        </div>
+
+        <div class="footer__col">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">The directory</a>
+          <a href="#">Changelog</a>
+          <a href="#">Careers</a>
+        </div>
+
+        <div class="footer__col">
+          <h4>Support</h4>
+          <a href="#">Help center</a>
+          <a href="#">Migrate to Rooftop</a>
+          <a href="#">Status</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+
+      <div class="footer__bottom r-up">
+        <span>© 2026 Rooftop Labs · Built above the noise</span>
+        <div class="footer__legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">RSS</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var root  = document.documentElement;
+      var video = document.getElementById('introVideo');
+      var skip  = document.getElementById('introSkip');
+      var done  = false;
+
+      var reduce = window.matchMedia &&
+                   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // hide content while the intro is on screen
+      if (!reduce) root.classList.add('intro-active');
+
+      function reveal() {
+        if (done) return;
+        done = true;
+        root.classList.add('is-revealed');
+        // tidy up the video once it has faded out
+        setTimeout(function () {
+          try { video.pause(); } catch (e) {}
+          if (video) video.remove();
+          if (skip) skip.remove();
+        }, 1000);
+      }
+
+      if (reduce) {
+        // no animation: drop straight to the static page
+        reveal();
+        return;
+      }
+
+      // primary trigger: the clip finishes
+      video.addEventListener('ended', reveal);
+      // let the viewer bail out early
+      skip.addEventListener('click', reveal);
+      video.addEventListener('click', reveal);
+      // if the video can't play (autoplay blocked, decode error), reveal anyway
+      video.addEventListener('error', reveal);
+
+      // safety net keyed to the real clip length, with an absolute cap
+      video.addEventListener('loadedmetadata', function () {
+        var ms = isFinite(video.duration) ? (video.duration * 1000 + 600) : 9000;
+        setTimeout(reveal, Math.min(ms, 12000));
+      });
+      // hard fallback in case metadata never loads
+      setTimeout(reveal, 12000);
+
+      // nudge autoplay on browsers that need an explicit play() call
+      var p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(function () { reveal(); });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var targets = document.querySelectorAll('[data-reveal]');
+      if (reduce || !('IntersectionObserver' in window)) {
+        targets.forEach(function (s) { s.classList.add('in-view'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var els = e.target.querySelectorAll('.r-up');
+          for (var i = 0; i < els.length; i++) els[i].style.transitionDelay = (i * 0.09) + 's';
+          e.target.classList.add('in-view');
+          io.unobserve(e.target);
+        });
+      }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+      targets.forEach(function (s) { io.observe(s); });
+    })();
+  </script>
+
+</body>
+</html>
