@@ -1,0 +1,6 @@
+.claude/
+.env.local
+server.js
+vercel.json
+node_modules/
+design-import/
