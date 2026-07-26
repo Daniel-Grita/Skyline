@@ -796,11 +796,11 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
     <img class="hero__bgimg" alt="" aria-hidden="true" src="assets/hero-skyline.jpg"
          fetchpriority="high" decoding="async">
     <!-- intro reveal: plays once, then fades to the static skyline beneath.
-         preload="none" + fetchpriority="low" keep the 5MB clip off the critical path;
+         preload="none" + fetchpriority="low" keep the clip off the critical path;
          the script below only loads it on capable connections. -->
     <video class="hero__video" id="introVideo" muted playsinline preload="none"
            fetchpriority="low" poster="assets/hero-skyline.jpg" aria-hidden="true">
-      <source src="assets/hero-reveal.min.mp4" type="video/mp4">
+      <source src="assets/hero-reveal.mp4" type="video/mp4">
     </video>
     <button class="hero__skip" id="introSkip" type="button">Skip intro</button>
 
@@ -1199,7 +1199,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
       var reduce = window.matchMedia &&
                    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // Skip the 5MB intro on data-saver / slow connections: reveal instantly and
+      // Skip the intro on data-saver / slow connections: reveal instantly and
       // never fetch the clip, so the page is usable immediately on weak networks.
       var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
       var et = conn && conn.effectiveType;
