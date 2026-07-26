@@ -5,9 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rooftop — Write above the noise</title>
   <meta name="description" content="A quiet home for newsletters that readers finish. Built-in audience, distraction-free editor, and zero platform fees on your first 1,000 subscribers.">
+  <script>
+    // set the saved theme before first paint to avoid a flash of the wrong theme
+    try { if (localStorage.getItem('rooftop-theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Load fonts without blocking first paint. Only the weights/styles actually used are requested. -->
+  <link rel="preload" as="image" href="assets/hero-skyline.jpg" fetchpriority="high">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <style>
 :root {
   --ink: #0e1726;
@@ -70,11 +78,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background-image: url('assets/hero-skyline.jpg');
-  background-size: cover;
-  background-position: center bottom;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
+  background: var(--sky);
   overflow: hidden;
   isolation: isolate;
 }
@@ -105,9 +109,11 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   image-rendering: pixelated;
 }
 .logo__word { font-weight: 700; font-size: 22px; letter-spacing: -0.025em; color: var(--ink); }
+.logo__svg { display: block; height: 28px; width: auto; aspect-ratio: 410 / 62; }
+.nav .logo { color: #fff; filter: drop-shadow(0 1px 10px rgba(14,40,90,0.35)); }
 .nav__links { display: flex; align-items: center; gap: 36px; font-size: 15px; font-weight: 500; }
-.nav__links a { color: rgba(14,23,38,0.72); text-decoration: none; transition: color .15s ease; }
-.nav__links a:hover { color: var(--ink); }
+.nav__links a { color: rgba(255,255,255,0.9); text-decoration: none; transition: color .15s ease; text-shadow: 0 1px 10px rgba(14,40,90,0.35); }
+.nav__links a:hover { color: #fff; }
 
 .pill--login {
   display: inline-flex; align-items: center; gap: 8px;
@@ -153,7 +159,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .hero__copy { pointer-events: none; }
 .hero__copy a, .hero__copy .btn { pointer-events: auto; }
 
-.hero__cta { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.hero__cta { display: inline-flex; align-items: stretch; gap: 14px; margin-bottom: 28px; }
 .btn {
   display: inline-flex; align-items: center;
   text-decoration: none; font-weight: 700; font-size: 15px;
@@ -381,6 +387,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   object-fit: cover; object-position: center bottom;
   image-rendering: pixelated;
   pointer-events: none;
+  transition: opacity 0.45s ease;
 }
 /* ---------- intro reveal ---------- */
 .hero__video {
@@ -395,18 +402,18 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .hero__skip {
   position: absolute; z-index: 21;
   right: 22px; bottom: 22px;
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 14px;
-  background: rgba(14,23,38,0.55);
-  color: #fff; border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 999px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--cream); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 0;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 600; font-size: 14px;
   cursor: pointer;
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  transition: opacity 0.5s ease, background 0.15s ease;
+  transition: opacity 0.5s ease, transform .1s ease, box-shadow .1s ease;
 }
-.hero__skip:hover { background: rgba(14,23,38,0.75); }
+.hero__skip:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.hero__skip:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
 
 /* content hidden until the intro finishes */
 .intro-active .nav,
@@ -681,17 +688,119 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   .footer__top { grid-template-columns: 1fr; gap: 36px; }
   .footer__divider { margin-bottom: 40px; }
 }
+
+/* ---------- SECTION HOVER MICRO-INTERACTIONS (features / writers / pricing / footer) ---------- */
+/* Extends the site's "brutalist lift" idiom: nudge toward top-left + grow the hard offset shadow. */
+.card, .quote--feature, .plan {
+  transition: transform .2s cubic-bezier(.2,.8,.3,1), box-shadow .2s cubic-bezier(.2,.8,.3,1);
+}
+.illus, .card__arrow, .qrow, .qrow__avatar, .plan__check {
+  transition: transform .2s cubic-bezier(.3,.9,.3,1.15), background .18s ease, box-shadow .18s ease;
+}
+
+/* Features — cards lift, illustration eases in, arrow darts up-right */
+.card:hover { transform: translate(-4px,-4px); box-shadow: 10px 10px 0 var(--ink); }
+.card--dark:hover { box-shadow: 10px 10px 0 rgba(14,23,38,0.55); }
+.card:hover .illus { transform: scale(1.035); }
+.card:hover .card__arrow { transform: translate(3px,-3px); }
+
+/* Writers — feature quote lifts, list rows slide in and light up their avatar */
+.quote--feature:hover { transform: translate(-4px,-4px); box-shadow: 12px 12px 0 rgba(0,0,0,0.45); }
+.qrow:hover { transform: translateX(8px); }
+.qrow:hover .qrow__avatar { background: var(--yellow); transform: translateY(-2px); box-shadow: 3px 3px 0 rgba(0,0,0,0.35); }
+
+/* Pricing — plans lift (the featured plan a touch more), check marks give a playful pop */
+.plan:hover { transform: translate(-4px,-4px); box-shadow: 10px 10px 0 rgba(0,0,0,0.4); }
+.plan--feat:hover { transform: translate(-5px,-5px); box-shadow: 13px 13px 0 var(--yellow); }
+.plan:hover .plan__check { transform: rotate(-8deg) scale(1.15); }
+
+/* Footer — column links slide, subscribe box lifts when focused */
+.footer__col a { transition: color .15s ease, transform .15s ease; }
+.footer__col a:hover { transform: translateX(4px); }
+.footer__sub { transition: transform .15s ease, box-shadow .15s ease; }
+.footer__sub:focus-within { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,0.45); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .quote--feature, .plan, .illus, .card__arrow, .qrow, .qrow__avatar,
+  .plan__check, .footer__col a, .footer__sub { transition: none; }
+  .card:hover, .card:hover .illus, .card:hover .card__arrow,
+  .quote--feature:hover, .qrow:hover, .qrow:hover .qrow__avatar,
+  .plan:hover, .plan--feat:hover, .plan:hover .plan__check,
+  .footer__col a:hover, .footer__sub:focus-within { transform: none; }
+}
+
+/* ---------- THEME TOGGLE ---------- */
+.nav__actions { display: flex; align-items: stretch; gap: 14px; }
+.theme-toggle {
+  display: inline-grid; place-items: center;
+  width: 42px; padding: 0;
+  background: var(--cream); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 0;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.theme-toggle:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.theme-toggle:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+.theme-toggle svg { display: block; }
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+
+/* ---------- THEME TRANSITION ----------
+   Best path: View Transitions crossfade the whole page. Fallback: a temporary class
+   eases colour/shadow changes while JS crossfades the hero image. */
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.45s; }
+.theme-transition * {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease,
+              box-shadow 0.45s ease, fill 0.45s ease, opacity 0.45s ease !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  .theme-transition *, .hero__bgimg { transition: none !important; }
+}
+
+/* ---------- DARK THEME ----------
+   Only the hero and features sections flip; writers/pricing/footer are already dark. */
+:root[data-theme="dark"] { --sky: #0a1220; }
+
+/* Hero: night backdrop + light nav (the <img> swaps to the night skyline; --sky is the fallback) */
+:root[data-theme="dark"] .hero__video { background: #0a1220; }
+:root[data-theme="dark"] .logo__word { color: var(--cream); }
+:root[data-theme="dark"] .chip--hero { border-color: var(--cream); box-shadow: 3px 3px 0 rgba(0,0,0,0.5); }
+
+/* Features: dark navy, cards keep their surfaces but pop via shadow colour
+   (cream cards -> soft black shadow, dark card -> yellow shadow) to match pricing. */
+:root[data-theme="dark"] .features { background: linear-gradient(180deg, #16273f 0%, #0f1d33 100%); }
+:root[data-theme="dark"] .chip--features { border-color: var(--cream); box-shadow: 3px 3px 0 rgba(0,0,0,0.5); }
+:root[data-theme="dark"] .card { box-shadow: 6px 6px 0 rgba(0,0,0,0.5); }
+:root[data-theme="dark"] .card--dark { box-shadow: 6px 6px 0 var(--yellow); }
+:root[data-theme="dark"] .card:hover { box-shadow: 10px 10px 0 rgba(0,0,0,0.5); }
+:root[data-theme="dark"] .card--dark:hover { box-shadow: 10px 10px 0 var(--yellow); }
   </style>
 </head>
 <body>
 
+  <!-- Rooftop Studio logo (single-colour, inherits currentColor) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="logo-rooftop" viewBox="0 0 410 62">
+      <path d="M3 41.5L18 20.5L33 41.5L48 20.5L63 41.5" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path fill="currentColor" d="M93.672 48H86.864V15.984H106.092L110.14 19.986V31.394L107.012 34.568L110.324 37.88V48H103.516V39.03L101.86 37.42H93.672V48ZM103.378 30.244V21.55H93.672V31.854H101.768L103.378 30.244ZM119.907 23.022H133.477L137.525 27.07V43.952L133.477 48H119.907L115.905 43.952V27.07L119.907 23.022ZM130.947 42.02V29.002H122.483V42.02H130.947ZM147.219 23.022H160.789L164.837 27.07V43.952L160.789 48H147.219L143.217 43.952V27.07L147.219 23.022ZM158.259 42.02V29.002H149.795V42.02H158.259ZM179.362 48H172.784V28.266H168.966V23.022H172.784V17.87L176.832 13.822H184.928V19.066H179.362V23.022H188.194V17.686H194.772V23.022H201.212V28.266H194.772V41.882H201.58V48H192.196L188.194 43.952V28.266H179.362V48ZM209.481 23.022H223.051L227.099 27.07V43.952L223.051 48H209.481L205.479 43.952V27.07L209.481 23.022ZM220.521 42.02V29.002H212.057V42.02H220.521ZM239.691 57.476H233.113V23.022H238.955V25.874L241.761 23.022H250.731L254.779 27.07V43.952L250.731 48H239.691V57.476ZM248.155 29.14H241.393L239.691 30.658V42.02H248.155V29.14ZM288.624 48H273.628L269.58 43.952V38.386H276.204V42.434H286.002V34.752H273.72L269.718 30.75V19.986L273.72 15.984H288.348L292.396 19.986V25.92H285.772V21.55H276.342V29.186H288.624L292.626 33.234V43.952L288.624 48ZM312.686 48H303.348L299.3 43.952V28.266H296.034V23.022H299.3V17.686H305.878V23.022H312.318V28.266H305.878V41.882H312.686V48ZM330.174 48H321.296L317.248 43.952V23.022H323.826V41.882H330.542L332.244 40.364V23.022H338.822V48H332.98V45.148L330.174 48ZM359.689 13.822H366.267V48H360.425V45.148L357.619 48H348.649L344.647 43.952V27.07L348.649 23.022H359.689V13.822ZM351.225 41.882H358.033L359.689 40.364V28.956H351.225V41.882ZM379.128 19.342H372.412V13.822H379.128V19.342ZM379.036 48H372.458V23.022H379.036V48ZM388.989 23.022H402.559L406.607 27.07V43.952L402.559 48H388.989L384.987 43.952V27.07L388.989 23.022ZM400.029 42.02V29.002H391.565V42.02H400.029Z"/>
+    </symbol>
+  </svg>
+
   <!-- ============ HERO ============ -->
   <section class="hero" aria-label="Hero">
-    <img class="hero__bgimg" alt="" aria-hidden="true" src="assets/hero-skyline.jpg">
-    <!-- intro reveal: plays once, then fades to the static skyline beneath -->
-    <video class="hero__video" id="introVideo" autoplay muted playsinline preload="auto"
-           poster="assets/hero-skyline.jpg" aria-hidden="true">
-      <source src="assets/hero-reveal.mp4" type="video/mp4">
+    <img class="hero__bgimg" alt="" aria-hidden="true" src="assets/hero-skyline.jpg"
+         fetchpriority="high" decoding="async">
+    <!-- intro reveal: plays once, then fades to the static skyline beneath.
+         preload="none" + fetchpriority="low" keep the 5MB clip off the critical path;
+         the script below only loads it on capable connections. -->
+    <video class="hero__video" id="introVideo" muted playsinline preload="none"
+           fetchpriority="low" poster="assets/hero-skyline.jpg" aria-hidden="true">
+      <source src="assets/hero-reveal.min.mp4" type="video/mp4">
     </video>
     <button class="hero__skip" id="introSkip" type="button">Skip intro</button>
 
@@ -699,9 +808,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 
     <!-- NAV -->
     <nav class="nav">
-      <a href="#" class="logo">
-        <span class="logo__mark">R</span>
-        <span class="logo__word">Rooftop</span>
+      <a href="#" class="logo" aria-label="Rooftop Studio">
+        <svg class="logo__svg" aria-hidden="true" focusable="false"><use href="#logo-rooftop"/></svg>
       </a>
 
       <div class="nav__links">
@@ -710,7 +818,13 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
         <a href="#pricing">Pricing</a>
       </div>
 
-      <a href="#" class="pill pill--login">Log In</a>
+      <div class="nav__actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <a href="#" class="pill pill--login">Log In</a>
+      </div>
     </nav>
 
     <!-- HERO COPY -->
@@ -721,7 +835,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 
       <h1 class="hero__title">
         Write above<br>
-        <span class="italic">the&nbsp;noise.</span>
+        the&nbsp;noise.
       </h1>
 
       <p class="hero__lede">
@@ -1029,9 +1143,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
     <div class="footer__inner">
       <div class="footer__top r-up">
         <div class="footer__brand">
-          <a href="#" class="logo">
-            <span class="logo__mark">R</span>
-            <span class="logo__word">Rooftop</span>
+          <a href="#" class="logo" aria-label="Rooftop Studio">
+            <svg class="logo__svg" aria-hidden="true" focusable="false"><use href="#logo-rooftop"/></svg>
           </a>
           <p class="footer__tag">A quiet home for newsletters that readers finish.</p>
           <form class="footer__sub" onsubmit="return false;">
@@ -1086,46 +1199,59 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
       var reduce = window.matchMedia &&
                    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // hide content while the intro is on screen
-      if (!reduce) root.classList.add('intro-active');
+      // Skip the 5MB intro on data-saver / slow connections: reveal instantly and
+      // never fetch the clip, so the page is usable immediately on weak networks.
+      var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      var et = conn && conn.effectiveType;
+      var slow = !!conn && (conn.saveData ||
+                 et === 'slow-2g' || et === '2g' || et === '3g');
 
-      function reveal() {
+      function reveal(drop) {
         if (done) return;
         done = true;
+        root.classList.remove('intro-active');
         root.classList.add('is-revealed');
-        // tidy up the video once it has faded out
+        // tidy up the video once it has faded out (or right away if we never played it)
         setTimeout(function () {
           try { video.pause(); } catch (e) {}
-          if (video) video.remove();
+          if (video) { video.removeAttribute('src'); video.remove(); }
           if (skip) skip.remove();
-        }, 1000);
+        }, drop ? 0 : 1000);
       }
 
-      if (reduce) {
-        // no animation: drop straight to the static page
-        reveal();
+      if (reduce || slow) {
+        // no animation / weak network: drop straight to the static page, no video download
+        reveal(true);
         return;
       }
 
+      // hide content while the intro is on screen
+      root.classList.add('intro-active');
+
       // primary trigger: the clip finishes
-      video.addEventListener('ended', reveal);
+      video.addEventListener('ended', function () { reveal(); });
       // let the viewer bail out early
-      skip.addEventListener('click', reveal);
-      video.addEventListener('click', reveal);
+      skip.addEventListener('click', function () { reveal(); });
+      video.addEventListener('click', function () { reveal(); });
       // if the video can't play (autoplay blocked, decode error), reveal anyway
-      video.addEventListener('error', reveal);
+      video.addEventListener('error', function () { reveal(true); });
 
       // safety net keyed to the real clip length, with an absolute cap
       video.addEventListener('loadedmetadata', function () {
         var ms = isFinite(video.duration) ? (video.duration * 1000 + 600) : 9000;
-        setTimeout(reveal, Math.min(ms, 12000));
+        setTimeout(reveal, Math.min(ms, 8000));
       });
-      // hard fallback in case metadata never loads
-      setTimeout(reveal, 12000);
 
-      // nudge autoplay on browsers that need an explicit play() call
+      // If the clip hasn't actually started within 2s (still buffering), reveal the
+      // content underneath so the page is never gated on a slow video fetch.
+      var startGuard = setTimeout(function () { reveal(true); }, 2000);
+      video.addEventListener('playing', function () { clearTimeout(startGuard); });
+
+      // now that we've committed to the intro, load and play the clip
+      video.preload = 'auto';
+      try { video.load(); } catch (e) {}
       var p = video.play();
-      if (p && typeof p.catch === 'function') p.catch(function () { reveal(); });
+      if (p && typeof p.catch === 'function') p.catch(function () { reveal(true); });
     })();
   </script>
 
@@ -1147,6 +1273,61 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
         });
       }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
       targets.forEach(function (s) { io.observe(s); });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var KEY = 'rooftop-theme';
+      var DAY = 'assets/hero-skyline.jpg';
+      var NIGHT = 'assets/hero-skyline-night.jpg';
+      var heroImg = document.querySelector('.hero__bgimg');
+      var video = document.getElementById('introVideo');
+      var btn = document.getElementById('themeToggle');
+
+      function setTheme(theme) {
+        var dark = theme === 'dark';
+        if (dark) root.setAttribute('data-theme', 'dark');
+        else root.removeAttribute('data-theme');
+        if (heroImg) heroImg.src = dark ? NIGHT : DAY;
+        if (video) video.poster = dark ? NIGHT : DAY;
+        if (btn) btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        try { localStorage.setItem(KEY, theme); } catch (e) {}
+      }
+
+      function toggle() {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        // Respect reduced-motion: swap instantly, no crossfade.
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          setTheme(next);
+          return;
+        }
+        // Best path: the browser crossfades the whole page (colours, gradient, hero image).
+        if (document.startViewTransition) {
+          document.startViewTransition(function () { setTheme(next); });
+          return;
+        }
+        // Fallback: ease colours via a temporary class and hand-crossfade the hero image.
+        var dark = next === 'dark';
+        root.classList.add('theme-transition');
+        setTimeout(function () { root.classList.remove('theme-transition'); }, 600);
+        if (dark) root.setAttribute('data-theme', 'dark');
+        else root.removeAttribute('data-theme');
+        if (video) video.poster = dark ? NIGHT : DAY;
+        if (btn) btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        try { localStorage.setItem(KEY, next); } catch (e) {}
+        if (heroImg) {
+          heroImg.style.opacity = '0';
+          setTimeout(function () { heroImg.src = dark ? NIGHT : DAY; heroImg.style.opacity = '1'; }, 450);
+        }
+      }
+
+      var saved;
+      try { saved = localStorage.getItem(KEY); } catch (e) {}
+      setTheme(saved === 'dark' ? 'dark' : 'light');
+
+      if (btn) btn.addEventListener('click', toggle);
     })();
   </script>
 
