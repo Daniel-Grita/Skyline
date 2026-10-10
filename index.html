@@ -22,6 +22,46 @@
   --cream: #fffaf0;
   --yellow: #fde68a;
   --sky: #cfe2f5;
+
+  /* ---------- MOTION ----------
+     Every timing and easing value on the page lives here. Tune in this block,
+     not inline. Two values are also read by JS (see --stagger-reveal and
+     --dur-theme) so the script and the stylesheet can't drift apart. */
+
+  /* easing curves */
+  --ease-out:    cubic-bezier(.2,.8,.3,1);     /* smooth decelerate — lifts, hovers */
+  --ease-pop:    cubic-bezier(.3,.9,.3,1.15);  /* slight overshoot — flap, letter, pops */
+  --ease-reveal: cubic-bezier(.2,.7,.3,1);     /* long and gentle — scroll reveal */
+
+  /* brutalist press + hover feedback */
+  --dur-press:  .1s;   /* buttons/pills nudging on press */
+  --dur-quick:  .15s;  /* link colour, footer slide, subscribe box */
+  --dur-micro:  .18s;  /* background/shadow under the hover pops */
+  --dur-hover:  .2s;   /* cards, plans, quotes lifting */
+
+  /* floating envelopes */
+  --dur-envelope:    .3s;
+  --dur-flap:        .4s;
+  --dur-letter:      .42s;
+  --dur-letter-fade: .25s;
+  --delay-letter:    .03s;
+
+  /* scroll reveal */
+  --dur-reveal:     .75s;
+  --stagger-reveal: .09s;  /* read by JS — per-item delay within a section */
+
+  /* intro reveal (video → content) */
+  --dur-video-fade:  .9s;
+  --dur-skip-fade:   .5s;
+  --dur-rise-nav:    .7s;
+  --delay-rise-nav:  .05s;
+  --dur-rise-copy:   .9s;
+  --delay-rise-copy: .18s;
+  --dur-env-fade:    1s;
+  --delay-env-fade:  .6s;
+
+  /* theme crossfade — also read by JS for the no-View-Transitions fallback */
+  --dur-theme: .45s;
 }
 
 * { box-sizing: border-box; }
@@ -112,7 +152,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .logo__svg { display: block; height: 28px; width: auto; aspect-ratio: 410 / 62; }
 .nav .logo { color: #fff; filter: drop-shadow(0 1px 10px rgba(14,40,90,0.35)); }
 .nav__links { display: flex; align-items: center; gap: 36px; font-size: 15px; font-weight: 500; }
-.nav__links a { color: rgba(255,255,255,0.9); text-decoration: none; transition: color .15s ease; text-shadow: 0 1px 10px rgba(14,40,90,0.35); }
+.nav__links a { color: rgba(255,255,255,0.9); text-decoration: none; transition: color var(--dur-quick) ease; text-shadow: 0 1px 10px rgba(14,40,90,0.35); }
 .nav__links a:hover { color: #fff; }
 
 .pill--login {
@@ -124,7 +164,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   color: var(--ink); text-decoration: none;
   font-weight: 600; font-size: 14px;
   box-shadow: 3px 3px 0 var(--ink);
-  transition: transform .1s ease, box-shadow .1s ease;
+  transition: transform var(--dur-press) ease, box-shadow var(--dur-press) ease;
 }
 .pill--login:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
 .pill--login:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
@@ -133,7 +173,9 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .hero__copy {
   position: relative; z-index: 4;
   max-width: 1100px; margin: 0 auto;
-  padding: 80px 40px 0;
+  /* bottom padding scales with the viewport so the skyline illustration (which
+     covers the hero from the bottom) always starts below the CTA row and meta line */
+  padding: 80px 40px clamp(140px, 40vh, 380px);
   text-align: center; color: #fff;
 }
 .hero__title {
@@ -165,7 +207,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   text-decoration: none; font-weight: 700; font-size: 15px;
   border-radius: 0; border: 2px solid var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
-  transition: transform .1s ease, box-shadow .1s ease;
+  transition: transform var(--dur-press) ease, box-shadow var(--dur-press) ease;
 }
 .btn:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
 .btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
@@ -187,8 +229,10 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .hero__meta {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; letter-spacing: 0.05em;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.92);
   text-transform: uppercase;
+  /* stays readable where it lands on the skyline image (short / narrow viewports) */
+  text-shadow: 0 1px 2px rgba(14,23,38,0.85), 0 0 14px rgba(14,23,38,0.55);
 }
 
 /* floating envelopes (open on hover / focus) */
@@ -199,12 +243,12 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   image-rendering: pixelated;
   perspective: 160px;
   cursor: pointer; outline: none;
-  transition: transform .3s cubic-bezier(.2,.8,.3,1);
+  transition: transform var(--dur-envelope) var(--ease-out);
 }
 .envelope__flap-back, .envelope__flap-front { position: absolute; top: 0; width: 0; height: 0; }
 .envelope__flap-front {
   transform-origin: 50% 0; backface-visibility: hidden; z-index: 2;
-  transition: transform .4s cubic-bezier(.3,.9,.3,1.15);
+  transition: transform var(--dur-flap) var(--ease-pop);
 }
 /* the letter that rises out */
 .envelope__letter {
@@ -215,28 +259,35 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   display: flex; flex-direction: column; gap: 2px;
   transform: translate(-50%, 6%) scale(.8);
   opacity: 0; z-index: 4;
-  transition: transform .42s cubic-bezier(.3,.9,.3,1.15) .03s, opacity .25s ease .03s;
+  transition: transform var(--dur-letter) var(--ease-pop) var(--delay-letter),
+              opacity var(--dur-letter-fade) ease var(--delay-letter);
 }
 .envelope__letter i { display: block; height: 2px; background: rgba(14,23,38,.5); }
 .envelope__letter i:nth-child(1) { width: 82%; }
 .envelope__letter i:nth-child(2) { width: 54%; }
 
+/* Envelopes live inside .hero__copy and are anchored to the copy itself (not the
+   viewport-tall hero), so they frame the headline and lede at every size instead
+   of drifting onto the text. Horizontal offsets scale with the viewport like the
+   headline does; the left one tracks the headline's second line. */
+.hero__copy .envelope { pointer-events: auto; }
+.hero__cta { position: relative; }
 .envelope--1 {
-  --rot: -8deg; left: 8%; top: 36%; width: 46px; height: 34px;
+  --rot: -8deg; left: calc(50% - min(33vw, 450px) - 46px); top: calc(146px + clamp(45px, 7.2vw, 106px)); width: 46px; height: 34px;
   box-shadow: 4px 4px 0 rgba(14,23,38,0.25);
   transform: rotate(var(--rot));
 }
 .envelope--1 .envelope__flap-back { left: 0; border-left: 21px solid transparent; border-right: 21px solid transparent; border-top: 14px solid var(--ink); }
 .envelope--1 .envelope__flap-front { left: 2px; border-left: 19px solid transparent; border-right: 19px solid transparent; border-top: 12px solid var(--cream); }
 .envelope--2 {
-  --rot: 12deg; right: 12%; top: 18%; width: 40px; height: 30px;
+  --rot: 12deg; left: calc(50% + min(30vw, 440px)); top: 82px; width: 40px; height: 30px;
   box-shadow: 3px 3px 0 rgba(14,23,38,0.22);
   transform: rotate(var(--rot));
 }
 .envelope--2 .envelope__flap-back { left: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 12px solid var(--ink); }
 .envelope--2 .envelope__flap-front { left: 2px; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 10px solid var(--cream); }
 .envelope--3 {
-  --rot: -6deg; right: 18%; top: 54%; width: 30px; height: 22px;
+  --rot: -6deg; left: calc(100% + clamp(48px, 8vw, 120px)); top: clamp(-50px, -3.4vw, -20px); width: 30px; height: 22px;
   box-shadow: 3px 3px 0 rgba(14,23,38,0.2);
   transform: rotate(var(--rot));
 }
@@ -257,16 +308,15 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .features {
   position: relative;
   background: linear-gradient(180deg, #6aa3dc 0%, #88b8e6 38%, #b6d3ee 100%);
-  padding: 130px 40px 150px;
+  padding: 130px 40px 120px;
   overflow: hidden;
   isolation: isolate;
 }
 
 .cloud { position: absolute; z-index: 1; image-rendering: pixelated; }
 .cloud__row { height: 10px; background: var(--cream); }
-.cloud--1 { left: 6%; top: 80px; }
+.cloud--1 { left: 6%; top: 52px; }
 .cloud--2 { right: 8%; top: 140px; }
-.cloud--3 { left: 18%; bottom: 120px; }
 
 .features__head {
   position: relative; z-index: 2;
@@ -286,8 +336,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .features__intro {
   max-width: 445px; margin: 0;
   font-size: 17px; line-height: 1.55;
-  color: rgba(255,255,255,0.92);
-  text-shadow: 0 1px 12px rgba(14,40,90,0.15);
+  /* ink, not white: white body text on this light-blue gradient falls well under 4.5:1 */
+  color: rgba(14,23,38,0.82);
 }
 
 .cards {
@@ -368,15 +418,16 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .marquee {
   position: relative; z-index: 2;
   max-width: 1240px; margin: 90px auto 0;
-  border-top: 1px dashed rgba(255,255,255,0.45);
+  border-top: 1px dashed rgba(14,23,38,0.3);
   padding-top: 28px;
   display: flex; align-items: center; justify-content: space-between;
   gap: 28px; flex-wrap: wrap;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
+  /* the strip sits on the palest end of the gradient, so it reads in ink */
+  color: rgba(14,23,38,0.72);
 }
-.wm { color: #fff; }
+.wm { color: var(--ink); }
 .wm--italic { font-style: italic; font-weight: 600; text-transform: none; font-size: 22px; letter-spacing: -0.025em; }
 .wm--bold { font-weight: 700; text-transform: none; font-size: 20px; letter-spacing: -0.025em; }
 .wm--mono { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; }
@@ -387,7 +438,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   object-fit: cover; object-position: center bottom;
   image-rendering: pixelated;
   pointer-events: none;
-  transition: opacity 0.45s ease;
+  transition: opacity var(--dur-theme) ease;
 }
 /* ---------- intro reveal ---------- */
 .hero__video {
@@ -396,7 +447,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   object-fit: cover; object-position: center bottom;
   image-rendering: pixelated;
   background: #4aa3f0;
-  transition: opacity 0.9s ease;
+  transition: opacity var(--dur-video-fade) ease;
   cursor: pointer;
 }
 .hero__skip {
@@ -410,7 +461,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   font-family: 'Instrument Sans', sans-serif;
   font-weight: 600; font-size: 14px;
   cursor: pointer;
-  transition: opacity 0.5s ease, transform .1s ease, box-shadow .1s ease;
+  transition: opacity var(--dur-skip-fade) ease,
+              transform var(--dur-press) ease, box-shadow var(--dur-press) ease;
 }
 .hero__skip:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
 .hero__skip:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
@@ -424,9 +476,9 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .is-revealed .hero__video,
 .is-revealed .hero__skip { opacity: 0; pointer-events: none; }
 
-.is-revealed .nav { animation: rise 0.7s ease 0.05s both; }
-.is-revealed .hero__copy { animation: rise 0.9s ease 0.18s both; }
-.is-revealed .envelope { animation: fade 1s ease 0.6s both; }
+.is-revealed .nav { animation: rise var(--dur-rise-nav) ease var(--delay-rise-nav) both; }
+.is-revealed .hero__copy { animation: rise var(--dur-rise-copy) ease var(--delay-rise-copy) both; }
+.is-revealed .envelope { animation: fade var(--dur-env-fade) ease var(--delay-env-fade) both; }
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
@@ -548,7 +600,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   position: relative;
   background: linear-gradient(180deg, #0e1a2e 0%, #091320 100%);
   color: var(--cream);
-  padding: 130px 40px 140px;
+  padding: 130px 40px 120px;
   overflow: hidden;
 }
 .pricing__head {
@@ -582,7 +634,11 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   padding: 36px 32px;
   display: flex; flex-direction: column; gap: 22px;
 }
-.plan--feat { background: var(--ink); color: var(--cream); box-shadow: 8px 8px 0 var(--yellow); position: relative; }
+.plan--feat { background: var(--ink); color: var(--cream); border-color: var(--yellow); box-shadow: 8px 8px 0 var(--yellow); position: relative; }
+/* the shared primary button is ink-on-ink inside the featured plan; flip it to yellow */
+.plan--feat .btn--primary { background: var(--yellow); color: var(--ink); box-shadow: 4px 4px 0 var(--cream); }
+.plan--feat .btn--primary:hover { box-shadow: 6px 6px 0 var(--cream); }
+.plan--feat .btn--primary:active { box-shadow: 2px 2px 0 var(--cream); }
 .plan__tag {
   position: absolute; top: -15px; right: 26px;
   background: var(--yellow); color: var(--ink); border: 2px solid var(--ink);
@@ -616,6 +672,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   padding: 72px 40px 40px;
   overflow: hidden;
 }
+/* moon lines up with the footer content's left edge */
+.planet--moon { left: max(40px, calc((100% - 1240px) / 2)); }
 .footer__divider {
   max-width: 1240px; margin: 0 auto 52px;
   border: none; border-top: 1px dashed rgba(255,250,240,0.22);
@@ -638,11 +696,11 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   padding: 12px 18px; background: var(--yellow); color: var(--ink);
   border: 2px solid var(--ink); border-left: none;
   font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 14px;
-  cursor: pointer; transition: background 0.15s ease;
+  cursor: pointer; transition: background var(--dur-quick) ease;
 }
 .footer__sub button:hover { background: #ffd95e; }
 .footer__col h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow); margin: 4px 0 18px; }
-.footer__col a { display: block; color: rgba(255,250,240,0.76); text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.15s ease; }
+.footer__col a { display: block; color: rgba(255,250,240,0.76); text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color var(--dur-quick) ease; }
 .footer__col a:hover { color: #fff; }
 .footer__bottom {
   display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
@@ -658,7 +716,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .r-up {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity .75s cubic-bezier(.2,.7,.3,1), transform .75s cubic-bezier(.2,.7,.3,1);
+  transition: opacity var(--dur-reveal) var(--ease-reveal),
+              transform var(--dur-reveal) var(--ease-reveal);
   will-change: opacity, transform;
 }
 .in-view .r-up { opacity: 1; transform: none; }
@@ -674,28 +733,52 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   .plans { grid-template-columns: 1fr; }
   .footer__top { grid-template-columns: 1fr 1fr; gap: 32px 40px; }
   .writers__head { align-items: flex-start; }
+  .writers__stat { text-align: left; }
+  /* label on its own line, wordmarks flow left-to-right beneath it */
+  .marquee { display: grid; grid-template-columns: repeat(2, max-content); justify-content: start; gap: 18px 56px; }
+  .marquee__label { grid-column: 1 / -1; }
 }
 @media (max-width: 640px) {
   .nav { padding: 18px 22px; }
   .nav__links { display: none; }
-  .hero__copy { padding: 56px 22px 0; }
+  .hero__copy { padding: 72px 22px clamp(140px, 40vh, 380px); }
   .hero__cta { flex-direction: column; width: 100%; }
   .btn { justify-content: center; }
+  .logo__svg { height: 24px; }
+  .hero__meta { text-wrap: balance; }
+  /* phones: the headline breaks after "Write", so the envelopes flank that short first line */
+  .envelope--1 { left: 6%; top: 150px; }
+  .envelope--2 { left: auto; right: 8%; top: 160px; }
+  .envelope--3 { display: none; }
+  /* section padding shrinks here, so lift the decorations back out of the headings */
+  .cloud--1 { top: 24px; }
+  .cloud--2 { top: 40px; }
+  .writers .star { transform: translateY(-50px); }
+  .pricing .planet { transform: translateY(-104px); }
+  .footer .star, .footer .planet { transform: translateY(-14px); }
   .features { padding: 90px 22px 110px; }
-  .marquee { justify-content: flex-start; }
+  .marquee { grid-template-columns: max-content; }
+  .footer .planet--moon { left: 22px; }
   .writers, .pricing { padding: 90px 22px 100px; }
   .footer { padding: 56px 22px 32px; }
   .footer__top { grid-template-columns: 1fr; gap: 36px; }
   .footer__divider { margin-bottom: 40px; }
 }
+/* wider phones: "Write above" fits on one line, leaving no room beside it,
+   so the envelopes sit in the empty band above the badge instead */
+@media (min-width: 395px) and (max-width: 640px) {
+  .envelope--1 { left: 10%; top: 18px; }
+  .envelope--2 { right: 14%; top: 14px; }
+}
 
 /* ---------- SECTION HOVER MICRO-INTERACTIONS (features / writers / pricing / footer) ---------- */
 /* Extends the site's "brutalist lift" idiom: nudge toward top-left + grow the hard offset shadow. */
 .card, .quote--feature, .plan {
-  transition: transform .2s cubic-bezier(.2,.8,.3,1), box-shadow .2s cubic-bezier(.2,.8,.3,1);
+  transition: transform var(--dur-hover) var(--ease-out), box-shadow var(--dur-hover) var(--ease-out);
 }
 .illus, .card__arrow, .qrow, .qrow__avatar, .plan__check {
-  transition: transform .2s cubic-bezier(.3,.9,.3,1.15), background .18s ease, box-shadow .18s ease;
+  transition: transform var(--dur-hover) var(--ease-pop),
+              background var(--dur-micro) ease, box-shadow var(--dur-micro) ease;
 }
 
 /* Features — cards lift, illustration eases in, arrow darts up-right */
@@ -715,9 +798,9 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 .plan:hover .plan__check { transform: rotate(-8deg) scale(1.15); }
 
 /* Footer — column links slide, subscribe box lifts when focused */
-.footer__col a { transition: color .15s ease, transform .15s ease; }
+.footer__col a { transition: color var(--dur-quick) ease, transform var(--dur-quick) ease; }
 .footer__col a:hover { transform: translateX(4px); }
-.footer__sub { transition: transform .15s ease, box-shadow .15s ease; }
+.footer__sub { transition: transform var(--dur-quick) ease, box-shadow var(--dur-quick) ease; }
 .footer__sub:focus-within { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,0.45); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -738,7 +821,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   border: 2px solid var(--ink); border-radius: 0;
   box-shadow: 3px 3px 0 var(--ink);
   cursor: pointer;
-  transition: transform .1s ease, box-shadow .1s ease;
+  transition: transform var(--dur-press) ease, box-shadow var(--dur-press) ease;
 }
 .theme-toggle:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
 .theme-toggle:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
@@ -752,10 +835,11 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
    Best path: View Transitions crossfade the whole page. Fallback: a temporary class
    eases colour/shadow changes while JS crossfades the hero image. */
 ::view-transition-old(root),
-::view-transition-new(root) { animation-duration: 0.45s; }
+::view-transition-new(root) { animation-duration: var(--dur-theme); }
 .theme-transition * {
-  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease,
-              box-shadow 0.45s ease, fill 0.45s ease, opacity 0.45s ease !important;
+  transition: background-color var(--dur-theme) ease, color var(--dur-theme) ease,
+              border-color var(--dur-theme) ease, box-shadow var(--dur-theme) ease,
+              fill var(--dur-theme) ease, opacity var(--dur-theme) ease !important;
 }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
@@ -775,6 +859,9 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
    (cream cards -> soft black shadow, dark card -> yellow shadow) to match pricing. */
 :root[data-theme="dark"] .features { background: linear-gradient(180deg, #16273f 0%, #0f1d33 100%); }
 :root[data-theme="dark"] .chip--features { border-color: var(--cream); box-shadow: 3px 3px 0 rgba(0,0,0,0.5); }
+:root[data-theme="dark"] .features__intro { color: rgba(255,250,240,0.78); }
+:root[data-theme="dark"] .marquee { color: rgba(255,250,240,0.7); border-top-color: rgba(255,250,240,0.25); }
+:root[data-theme="dark"] .wm { color: var(--cream); }
 :root[data-theme="dark"] .card { box-shadow: 6px 6px 0 rgba(0,0,0,0.5); }
 :root[data-theme="dark"] .card--dark { box-shadow: 6px 6px 0 var(--yellow); }
 :root[data-theme="dark"] .card:hover { box-shadow: 10px 10px 0 rgba(0,0,0,0.5); }
@@ -829,6 +916,18 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 
     <!-- HERO COPY -->
     <div class="hero__copy">
+      <!-- floating pixel mail icons framing the headline (open on hover) -->
+      <div class="envelope envelope--2" tabindex="0" role="img" aria-label="Envelope">
+        <div class="envelope__letter"><i></i><i></i></div>
+        <div class="envelope__flap-back"></div>
+        <div class="envelope__flap-front"></div>
+      </div>
+      <div class="envelope envelope--1" tabindex="0" role="img" aria-label="Envelope">
+        <div class="envelope__letter"><i></i><i></i></div>
+        <div class="envelope__flap-back"></div>
+        <div class="envelope__flap-front"></div>
+      </div>
+
       <div class="chip chip--hero">
         NEW&nbsp;·&nbsp;Pixel Editor v2.0 is live
       </div>
@@ -852,28 +951,18 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
           Start writing free
         </a>
         <a href="#" class="btn btn--secondary">See example issues</a>
+
+        <!-- floating pixel mail icon (open on hover), off the end of the lede -->
+        <div class="envelope envelope--3" tabindex="0" role="img" aria-label="Envelope">
+          <div class="envelope__letter"><i></i><i></i></div>
+          <div class="envelope__flap-back"></div>
+          <div class="envelope__flap-front"></div>
+        </div>
       </div>
 
       <div class="hero__meta">
-        12,847 writers&nbsp;·&nbsp;No credit card&nbsp;·&nbsp;Free forever tier
+        12,847&nbsp;writers&nbsp;· No&nbsp;credit&nbsp;card&nbsp;· Free&nbsp;forever&nbsp;tier
       </div>
-    </div>
-
-    <!-- floating pixel mail icons (open on hover) -->
-    <div class="envelope envelope--1" tabindex="0" role="img" aria-label="Envelope">
-      <div class="envelope__letter"><i></i><i></i></div>
-      <div class="envelope__flap-back"></div>
-      <div class="envelope__flap-front"></div>
-    </div>
-    <div class="envelope envelope--2" tabindex="0" role="img" aria-label="Envelope">
-      <div class="envelope__letter"><i></i><i></i></div>
-      <div class="envelope__flap-back"></div>
-      <div class="envelope__flap-front"></div>
-    </div>
-    <div class="envelope envelope--3" tabindex="0" role="img" aria-label="Envelope">
-      <div class="envelope__letter"><i></i><i></i></div>
-      <div class="envelope__flap-back"></div>
-      <div class="envelope__flap-front"></div>
     </div>
   </section>
 
@@ -888,10 +977,6 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
       <div class="cloud__row" style="width:48px; height:8px; opacity:.75;"></div>
       <div class="cloud__row" style="width:80px; opacity:.85;"></div>
       <div class="cloud__row" style="width:32px; height:8px; opacity:.75; margin-left:20px;"></div>
-    </div>
-    <div class="cloud cloud--3" aria-hidden="true">
-      <div class="cloud__row" style="width:36px; height:8px; opacity:.55;"></div>
-      <div class="cloud__row" style="width:56px; height:8px; opacity:.55;"></div>
     </div>
 
     <!-- header -->
@@ -1052,7 +1137,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
     <div class="star" style="right:10%;top:90px;  width:5px; height:5px; opacity:.5;"></div>
     <div class="star" style="right:20%;top:44px;  width:3px; height:3px; opacity:.3;"></div>
     <div class="star" style="left:42%; top:36px;  width:4px; height:4px; opacity:.35;"></div>
-    <div class="star" style="right:35%;bottom:80px;width:3px; height:3px; opacity:.2;"></div>
+    <div class="star" style="right:35%;bottom:36px;width:3px; height:3px; opacity:.2;"></div>
     <!-- pixel planet with ring -->
     <div class="planet" aria-hidden="true" style="right:6%; top:140px; color: #f1b94a; opacity:.55;">
       <div class="planet__row" style="width:16px; height:6px; margin-left:6px;"></div>
@@ -1119,21 +1204,21 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
   <!-- ============ FOOTER ============ -->
   <footer class="footer" aria-label="Footer" data-reveal>
     <div class="star" style="left:5%;  top:30px;  width:3px; height:3px; opacity:.3;"></div>
-    <div class="star" style="left:25%; top:60px;  width:4px; height:4px; opacity:.2;"></div>
+    <div class="star" style="left:25%; top:40px;  width:4px; height:4px; opacity:.2;"></div>
     <div class="star" style="right:8%; top:45px;  width:3px; height:3px; opacity:.35;"></div>
     <div class="star" style="right:30%;top:20px;  width:4px; height:4px; opacity:.25;"></div>
     <div class="star" style="left:55%; top:50px;  width:3px; height:3px; opacity:.15;"></div>
     <div class="star" style="left:70%; top:35px;  width:3px; height:3px; opacity:.2;"></div>
-    <div class="star" style="right:45%;top:55px;  width:4px; height:4px; opacity:.15;"></div>
+    <div class="star" style="right:45%;top:36px;  width:4px; height:4px; opacity:.15;"></div>
     <!-- pixel moon -->
-    <div class="planet" aria-hidden="true" style="left:4%; top:50px; color: #c8d8e8; opacity:.35;">
+    <div class="planet planet--moon" aria-hidden="true" style="top:26px; color: #c8d8e8; opacity:.35;">
       <div class="planet__row" style="width:10px; height:5px; margin-left:3px;"></div>
       <div class="planet__row" style="width:16px; height:5px;"></div>
       <div class="planet__row" style="width:16px; height:5px; background: #8a9ab0;"></div>
       <div class="planet__row" style="width:10px; height:5px; margin-left:3px; background: #8a9ab0;"></div>
     </div>
     <!-- tiny pixel planet -->
-    <div class="planet" aria-hidden="true" style="right:12%; top:28px; color: #e8a855; opacity:.25;">
+    <div class="planet" aria-hidden="true" style="right:12%; top:30px; color: #e8a855; opacity:.25;">
       <div class="planet__row" style="width:6px; height:4px; margin-left:2px;"></div>
       <div class="planet__row" style="width:10px; height:4px;"></div>
       <div class="planet__row" style="width:6px; height:4px; margin-left:2px; background: #c47830;"></div>
@@ -1263,11 +1348,14 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
         targets.forEach(function (s) { s.classList.add('in-view'); });
         return;
       }
+      // per-item stagger comes from --stagger-reveal so all timing stays in the CSS block
+      var stagger = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--stagger-reveal')) || 0.09;
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (!e.isIntersecting) return;
           var els = e.target.querySelectorAll('.r-up');
-          for (var i = 0; i < els.length; i++) els[i].style.transitionDelay = (i * 0.09) + 's';
+          for (var i = 0; i < els.length; i++) els[i].style.transitionDelay = (i * stagger) + 's';
           e.target.classList.add('in-view');
           io.unobserve(e.target);
         });
@@ -1285,6 +1373,8 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
       var heroImg = document.querySelector('.hero__bgimg');
       var video = document.getElementById('introVideo');
       var btn = document.getElementById('themeToggle');
+      // crossfade length comes from --dur-theme so JS and CSS can't drift apart
+      var themeMs = (parseFloat(getComputedStyle(root).getPropertyValue('--dur-theme')) || 0.45) * 1000;
 
       function setTheme(theme) {
         var dark = theme === 'dark';
@@ -1311,7 +1401,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
         // Fallback: ease colours via a temporary class and hand-crossfade the hero image.
         var dark = next === 'dark';
         root.classList.add('theme-transition');
-        setTimeout(function () { root.classList.remove('theme-transition'); }, 600);
+        setTimeout(function () { root.classList.remove('theme-transition'); }, themeMs + 150);
         if (dark) root.setAttribute('data-theme', 'dark');
         else root.removeAttribute('data-theme');
         if (video) video.poster = dark ? NIGHT : DAY;
@@ -1319,7 +1409,7 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
         try { localStorage.setItem(KEY, next); } catch (e) {}
         if (heroImg) {
           heroImg.style.opacity = '0';
-          setTimeout(function () { heroImg.src = dark ? NIGHT : DAY; heroImg.style.opacity = '1'; }, 450);
+          setTimeout(function () { heroImg.src = dark ? NIGHT : DAY; heroImg.style.opacity = '1'; }, themeMs);
         }
       }
 
@@ -1329,6 +1419,90 @@ h1, h2, h3 { font-family: 'Syne', system-ui, sans-serif; }
 
       if (btn) btn.addEventListener('click', toggle);
     })();
+  </script>
+
+  <!-- ==========================================================================
+       DEV ONLY — DialKit motion tuning panel.
+       Runs on localhost only; never executes on the deployed site. Loads from a
+       CDN, so nothing is installed and no files are added. Drives the --dur-*,
+       --ease-* and --delay-* tokens in :root live. Delete this whole block when
+       you're done tuning.
+       ========================================================================== -->
+  <script type="module">
+    if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
+      const DEPS = '?deps=react@18.3.1,react-dom@18.3.1';
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://esm.sh/dialkit@1.4.3/styles.css';
+      document.head.appendChild(link);
+
+      const [React, ReactDOM, dialkit] = await Promise.all([
+        import('https://esm.sh/react@18.3.1'),
+        import('https://esm.sh/react-dom@18.3.1/client'),
+        import('https://esm.sh/dialkit@1.4.3' + DEPS),
+      ]);
+      const { DialRoot, useDialKit } = dialkit;
+      const h = React.createElement;
+      const setVar = (k, v) => document.documentElement.style.setProperty(k, v);
+
+      function Dials() {
+        const p = useDialKit('Skyline Motion', {
+          // durations in ms — easier to read on a slider than .42s
+          press:      [100, 0, 400, 10],
+          quick:      [150, 0, 600, 10],
+          micro:      [180, 0, 600, 10],
+          hover:      [200, 0, 800, 10],
+          envelope:   [300, 0, 1000, 10],
+          flap:       [400, 0, 1200, 10],
+          letter:     [420, 0, 1200, 10],
+          letterFade: [250, 0, 800, 10],
+          reveal:     [750, 0, 2000, 10],
+          stagger:    [90, 0, 400, 5],
+          theme:      [450, 0, 1500, 10],
+          // easing control points — x stays 0..1, y may overshoot.
+          // _collapsed keeps the panel short enough for a laptop screen.
+          easeOut: { _collapsed: true, x1: [0.2, 0, 1, 0.01], y1: [0.8, -1, 2, 0.01], x2: [0.3, 0, 1, 0.01], y2: [1, -1, 2, 0.01] },
+          easePop: { _collapsed: true, x1: [0.3, 0, 1, 0.01], y1: [0.9, -1, 2, 0.01], x2: [0.3, 0, 1, 0.01], y2: [1.15, -1, 2, 0.01] },
+        }, { id: 'skyline-motion', persist: true });
+
+        React.useEffect(() => {
+          setVar('--dur-press', p.press + 'ms');
+          setVar('--dur-quick', p.quick + 'ms');
+          setVar('--dur-micro', p.micro + 'ms');
+          setVar('--dur-hover', p.hover + 'ms');
+          setVar('--dur-envelope', p.envelope + 'ms');
+          setVar('--dur-flap', p.flap + 'ms');
+          setVar('--dur-letter', p.letter + 'ms');
+          setVar('--dur-letter-fade', p.letterFade + 'ms');
+          setVar('--dur-reveal', p.reveal + 'ms');
+          setVar('--stagger-reveal', p.stagger + 'ms');
+          setVar('--dur-theme', p.theme + 'ms');
+          const bez = (e) => `cubic-bezier(${e.x1},${e.y1},${e.x2},${e.y2})`;
+          setVar('--ease-out', bez(p.easeOut));
+          setVar('--ease-pop', bez(p.easePop));
+        });
+
+        // esm.sh serves dialkit's production build, and dialkit hides itself in
+        // production — so it must be opted back in. Safe: this block is localhost-gated.
+        return h(DialRoot, { productionEnabled: true, position: 'top-right' });
+      }
+
+      const mount = document.createElement('div');
+      document.body.appendChild(mount);
+      ReactDOM.createRoot(mount).render(h(Dials));
+
+      // `copyMotion()` in the console prints the tuned values as a paste-ready :root block
+      window.copyMotion = () => {
+        const s = getComputedStyle(document.documentElement);
+        const out = ['--dur-press','--dur-quick','--dur-micro','--dur-hover','--dur-envelope',
+          '--dur-flap','--dur-letter','--dur-letter-fade','--dur-reveal','--stagger-reveal',
+          '--dur-theme','--ease-out','--ease-pop']
+          .map(k => `  ${k}: ${s.getPropertyValue(k).trim()};`).join('\n');
+        console.log(out);
+        return out;
+      };
+      console.log('%cDialKit loaded — tuning Skyline motion. Run copyMotion() to export.', 'color:#c60');
+    }
   </script>
 
 </body>
